@@ -53,8 +53,6 @@ As colaboradoras deste time:
 
 ---
 
----
-
 ## ✅ Status de Desenvolvimento
 - [x] Definição do Escopo
 - [x] Documento de Visão
