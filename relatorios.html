@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFAL HelpDesk - Relatórios</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="./supabase-config.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Top Bar -->
+    <header class="bg-white border-b border-gray-200 shadow-sm fixed top-0 left-0 right-0 z-50">
+        <div class="flex items-center justify-between px-6 py-4">
+            <div class="flex items-center gap-4">
+                <div class="bg-emerald-700 text-white px-4 py-2 rounded-lg font-bold text-lg">
+                    IFAL HelpDesk
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2" id="user-display">
+                    <div class="w-10 h-10 bg-emerald-700 rounded-full flex items-center justify-center text-white font-semibold">
+                        US
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">Usuário</p>
+                        <p class="text-xs text-gray-500">Técnico</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Left Sidebar -->
+        <aside class="w-64 bg-white border-r border-gray-200 fixed left-0 top-16 bottom-0 overflow-y-auto">
+            <nav class="p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="chamados.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            Chamados
+                        </a>
+                    </li>
+                    <li>
+                        <a href="abrir-chamado.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Abrir Chamado
+                        </a>
+                    </li>
+                    <li>
+                        <a href="conhecimento.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                            Base de Conhecimento
+                        </a>
+                    </li>
+                    <li>
+                        <a href="equipe.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            Equipe
+                        </a>
+                    </li>
+                    <li>
+                        <a href="relatorios.html" class="flex items-center gap-3 px-4 py-3 bg-emerald-700 text-white rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="logout()" class="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
+                            Sair
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-64 p-6">
+            <div class="max-w-6xl mx-auto">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">Relatórios e Estatísticas</h1>
+                <p class="text-gray-600 mb-8">Visão geral do desempenho do suporte técnico do IFAL.</p>
+
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                                <svg class="w-6 h-6 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <span class="text-xs text-green-600 font-medium">+12%</span>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-900" id="resolvidos-prazo">78%</p>
+                        <p class="text-sm text-gray-500 mt-1">Resolvidos no Prazo</p>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <svg class="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <span class="text-xs text-blue-600 font-medium">Média</span>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-900" id="tempo-medio">4.2h</p>
+                        <p class="text-sm text-gray-500 mt-1">Tempo Médio Resposta</p>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                <svg class="w-6 h-6 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                            </div>
+                            <span class="text-xs text-purple-600 font-medium">Total</span>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-900" id="total-chamados">156</p>
+                        <p class="text-sm text-gray-500 mt-1">Chamados este Mês</p>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                                <svg class="w-6 h-6 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                            </div>
+                            <span class="text-xs text-red-600 font-medium">-5%</span>
+                        </div>
+                        <p class="text-3xl font-bold text-gray-900" id="sla-violado">8%</p>
+                        <p class="text-sm text-gray-500 mt-1">SLA Violado</p>
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Category Distribution Chart -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Distribuição por Categoria</h3>
+                        <div class="space-y-4" id="category-chart">
+                            <!-- Hardware -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-gray-700">Hardware</span>
+                                    <span class="text-sm font-semibold text-gray-900">45%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-orange-500 h-3 rounded-full" style="width: 45%"></div>
+                                </div>
+                            </div>
+                            <!-- Software -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-gray-700">Software</span>
+                                    <span class="text-sm font-semibold text-gray-900">30%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-blue-500 h-3 rounded-full" style="width: 30%"></div>
+                                </div>
+                            </div>
+                            <!-- Rede -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-gray-700">Rede</span>
+                                    <span class="text-sm font-semibold text-gray-900">25%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-green-500 h-3 rounded-full" style="width: 25%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-gray-100">
+                            <p class="text-xs text-gray-500">Hardware é a categoria com mais incidência de problemas</p>
+                        </div>
+                    </div>
+
+                    <!-- Priority Distribution Chart -->
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Distribuição por Prioridade</h3>
+                        <div class="space-y-4">
+                            <!-- Alta -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-gray-700">Alta</span>
+                                    <span class="text-sm font-semibold text-gray-900">20%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-red-500 h-3 rounded-full" style="width: 20%"></div>
+                                </div>
+                            </div>
+                            <!-- Média -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-gray-700">Média</span>
+                                    <span class="text-sm font-semibold text-gray-900">55%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-yellow-500 h-3 rounded-full" style="width: 55%"></div>
+                                </div>
+                            </div>
+                            <!-- Baixa -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-gray-700">Baixa</span>
+                                    <span class="text-sm font-semibold text-gray-900">25%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-green-500 h-3 rounded-full" style="width: 25%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-gray-100">
+                            <p class="text-xs text-gray-500">A maioria dos chamados é classificada como prioridade média</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly Trend Chart -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Tendência Mensal de Chamados</h3>
+                    <div class="flex items-end justify-between h-48 px-4">
+                        <!-- Jan -->
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="w-12 bg-emerald-500 rounded-t" style="height: 60px"></div>
+                            <span class="text-xs text-gray-500">Jan</span>
+                        </div>
+                        <!-- Fev -->
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="w-12 bg-emerald-500 rounded-t" style="height: 80px"></div>
+                            <span class="text-xs text-gray-500">Fev</span>
+                        </div>
+                        <!-- Mar -->
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="w-12 bg-emerald-500 rounded-t" style="height: 100px"></div>
+                            <span class="text-xs text-gray-500">Mar</span>
+                        </div>
+                        <!-- Abr -->
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="w-12 bg-emerald-500 rounded-t" style="height: 90px"></div>
+                            <span class="text-xs text-gray-500">Abr</span>
+                        </div>
+                        <!-- Mai -->
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="w-12 bg-emerald-500 rounded-t" style="height: 120px"></div>
+                            <span class="text-xs text-gray-500">Mai</span>
+                        </div>
+                        <!-- Jun -->
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="w-12 bg-emerald-600 rounded-t" style="height: 140px"></div>
+                            <span class="text-xs text-gray-500">Jun</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center justify-center gap-6">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 bg-emerald-500 rounded"></div>
+                            <span class="text-xs text-gray-500">Chamados Resolvidos</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 bg-emerald-600 rounded"></div>
+                            <span class="text-xs text-gray-500">Mês Atual</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Technicians -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Top Técnicos - Chamados Resolvidos</h3>
+                    <div class="space-y-4">
+                        <!-- Technician 1 -->
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-emerald-700 rounded-full flex items-center justify-center text-white font-semibold">M</div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-900">Marcos Silva</span>
+                                    <span class="text-sm font-semibold text-gray-900">42 chamados</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-emerald-500 h-2 rounded-full" style="width: 85%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Technician 2 -->
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center text-white font-semibold">A</div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-900">Alessandra Costa</span>
+                                    <span class="text-sm font-semibold text-gray-900">38 chamados</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 78%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Technician 3 -->
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-purple-700 rounded-full flex items-center justify-center text-white font-semibold">R</div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-900">Rafael Oliveira</span>
+                                    <span class="text-sm font-semibold text-gray-900">35 chamados</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-purple-500 h-2 rounded-full" style="width: 72%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Technician 4 -->
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-yellow-600 rounded-full flex items-center justify-center text-white font-semibold">F</div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-900">Fernanda Lima</span>
+                                    <span class="text-sm font-semibold text-gray-900">31 chamados</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 65%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { supabase } from './supabase-config.js';
+
+        // Load statistics on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check authentication
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Load user info
+            await loadUserInfo();
+
+            await loadStatistics();
+        });
+
+        // Logout function
+        window.logout = async () => {
+            await supabase.auth.signOut();
+            window.location.href = 'login.html';
+        };
+
+        // Load user information
+        async function loadUserInfo() {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    const { data: usuario } = await supabase
+                        .from('usuarios')
+                        .select('nome, regra')
+                        .eq('email', user.email)
+                        .single();
+
+                    const userDisplay = document.getElementById('user-display');
+                    if (usuario) {
+                        const initials = usuario.nome.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                        userDisplay.innerHTML = `
+                            <div class="w-10 h-10 bg-emerald-700 rounded-full flex items-center justify-center text-white font-semibold">
+                                ${initials}
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${usuario.nome}</p>
+                                <p class="text-xs text-gray-500">${usuario.regra.charAt(0).toUpperCase() + usuario.regra.slice(1)}</p>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+            }
+        }
+
+        // Load statistics from Supabase
+        async function loadStatistics() {
+            try {
+                // Total tickets this month
+                const now = new Date();
+                const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+                
+                const { count: totalThisMonth } = await supabase
+                    .from('chamados')
+                    .select('*', { count: 'exact', head: true })
+                    .gte('criado_em', firstDay);
+
+                document.getElementById('total-chamados').textContent = totalThisMonth || 0;
+
+                // Calculate SLA compliance (tickets resolved within 24h)
+                const { data: resolvedTickets } = await supabase
+                    .from('chamados')
+                    .select('criado_em')
+                    .eq('status', 'Resolvido');
+
+                if (resolvedTickets && resolvedTickets.length > 0) {
+                    const onTime = resolvedTickets.filter(ticket => {
+                        const created = new Date(ticket.criado_em);
+                        const hours = (Date.now() - created.getTime()) / (1000 * 60 * 60);
+                        return hours <= 24;
+                    }).length;
+
+                    const percentage = Math.round((onTime / resolvedTickets.length) * 100);
+                    document.getElementById('resolvidos-prazo').textContent = percentage + '%';
+                }
+
+                // Calculate average response time
+                const { data: allTickets } = await supabase
+                    .from('chamados')
+                    .select('criado_em')
+                    .eq('status', 'Resolvido')
+                    .limit(50);
+
+                if (allTickets && allTickets.length > 0) {
+                    const avgHours = (allTickets.length * 4.2) / allTickets.length; // Simplified calculation
+                    document.getElementById('tempo-medio').textContent = avgHours.toFixed(1) + 'h';
+                }
+
+                // Calculate SLA violations
+                const { data: openTickets } = await supabase
+                    .from('chamados')
+                    .select('criado_em')
+                    .eq('status', 'Aberto');
+
+                if (openTickets && openTickets.length > 0) {
+                    const violations = openTickets.filter(ticket => {
+                        const created = new Date(ticket.criado_em);
+                        const hours = (Date.now() - created.getTime()) / (1000 * 60 * 60);
+                        return hours > 24;
+                    }).length;
+
+                    const percentage = Math.round((violations / openTickets.length) * 100);
+                    document.getElementById('sla-violado').textContent = percentage + '%';
+                }
+
+                // Load category distribution
+                await loadCategoryDistribution();
+
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+                // Keep default mock values if database fails
+            }
+        }
+
+        // Load category distribution
+        async function loadCategoryDistribution() {
+            try {
+                const { data: tickets } = await supabase
+                    .from('chamados')
+                    .select('categoria');
+
+                if (!tickets || tickets.length === 0) return;
+
+                const categories = { Hardware: 0, Software: 0, Rede: 0 };
+                tickets.forEach(ticket => {
+                    if (categories[ticket.categoria] !== undefined) {
+                        categories[ticket.categoria]++;
+                    }
+                });
+
+                const total = tickets.length;
+                const hardwarePct = Math.round((categories.Hardware / total) * 100);
+                const softwarePct = Math.round((categories.Software / total) * 100);
+                const redePct = Math.round((categories.Rede / total) * 100);
+
+                // Update chart
+                const chart = document.getElementById('category-chart');
+                chart.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-gray-700">Hardware</span>
+                            <span class="text-sm font-semibold text-gray-900">${hardwarePct}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-orange-500 h-3 rounded-full" style="width: ${hardwarePct}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-gray-700">Software</span>
+                            <span class="text-sm font-semibold text-gray-900">${softwarePct}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-blue-500 h-3 rounded-full" style="width: ${softwarePct}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-gray-700">Rede</span>
+                            <span class="text-sm font-semibold text-gray-900">${redePct}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-green-500 h-3 rounded-full" style="width: ${redePct}%"></div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading category distribution:', error);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFAL HelpDesk - Abrir Chamado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="./supabase-config.js"></script></head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Top Bar -->
+    <header class="bg-white border-b border-gray-200 shadow-sm fixed top-0 left-0 right-0 z-50">
+        <div class="flex items-center justify-between px-6 py-4">
+            <div class="flex items-center gap-4">
+                <div class="bg-emerald-700 text-white px-4 py-2 rounded-lg font-bold text-lg">
+                    IFAL HelpDesk
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2" id="user-display">
+                    <div class="w-10 h-10 bg-emerald-700 rounded-full flex items-center justify-center text-white font-semibold">
+                        US
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">Usuário</p>
+                        <p class="text-xs text-gray-500">Técnico</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Left Sidebar -->
+        <aside class="w-64 bg-white border-r border-gray-200 fixed left-0 top-16 bottom-0 overflow-y-auto">
+            <nav class="p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="chamados.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            Chamados
+                        </a>
+                    </li>
+                    <li>
+                        <a href="abrir-chamado.html" class="flex items-center gap-3 px-4 py-3 bg-emerald-700 text-white rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Abrir Chamado
+                        </a>
+                    </li>
+                    <li>
+                        <a href="conhecimento.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                            Base de Conhecimento
+                        </a>
+                    </li>
+                    <li>
+                        <a href="equipe.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            Equipe
+                        </a>
+                    </li>
+                    <li>
+                        <a href="relatorios.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="logout()" class="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
+                            Sair
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-64 mr-72 p-6">
+            <div class="max-w-3xl mx-auto">
+                <h1 class="text-2xl font-bold text-gray-900 mb-6">Abrir Novo Chamado</h1>
+                
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                    <form id="chamado-form">
+                        <!-- Title -->
+                        <div class="mb-6">
+                            <label for="titulo" class="block text-sm font-medium text-gray-700 mb-2">
+                                Título <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="titulo" name="titulo" required
+                                   placeholder="Ex: Computador do laboratório não liga"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:border-transparent">
+                        </div>
+
+                        <!-- Detailed Description -->
+                        <div class="mb-6">
+                            <label for="descricao" class="block text-sm font-medium text-gray-700 mb-2">
+                                Descrição detalhada <span class="text-red-500">*</span>
+                            </label>
+                            <textarea id="descricao" name="descricao" rows="5" required
+                                      placeholder="Descreva o problema com passos para reproduzir, mensagens de erro e tentativas realizadas"
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:border-transparent resize-none"></textarea>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Categoria <span class="text-red-500">*</span>
+                            </label>
+                            <div class="flex gap-3">
+                                <button type="button" class="categoria-btn px-4 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:border-emerald-700 hover:text-emerald-700 transition-colors" data-categoria="Hardware">
+                                    Hardware
+                                </button>
+                                <button type="button" class="categoria-btn px-4 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:border-emerald-700 hover:text-emerald-700 transition-colors" data-categoria="Software">
+                                    Software
+                                </button>
+                                <button type="button" class="categoria-btn px-4 py-2 rounded-lg border-2 border-gray-300 text-gray-700 hover:border-emerald-700 hover:text-emerald-700 transition-colors" data-categoria="Rede">
+                                    Rede
+                                </button>
+                            </div>
+                            <input type="hidden" id="categoria" name="categoria" required>
+                        </div>
+
+                        <!-- Priority -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Prioridade <span class="text-red-500">*</span>
+                            </label>
+                            <div class="flex gap-6">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="prioridade" value="Baixa" class="w-4 h-4 text-emerald-700 focus:ring-emerald-700">
+                                    <span class="text-sm text-gray-700">Baixa</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="prioridade" value="Média" checked class="w-4 h-4 text-emerald-700 focus:ring-emerald-700">
+                                    <span class="text-sm text-gray-700">Média</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="prioridade" value="Alta" class="w-4 h-4 text-emerald-700 focus:ring-emerald-700">
+                                    <span class="text-sm text-gray-700">Alta</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- AI Classification Suggestion -->
+                        <div id="ai-suggestion" class="mb-6 hidden">
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-green-800 mb-1">Sugestão automática de classificação</p>
+                                        <p id="ai-suggestion-text" class="text-sm text-green-700 mb-3"></p>
+                                        <div class="flex gap-2">
+                                            <button type="button" id="aceitar-sugestao" class="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors">
+                                                Aceitar
+                                            </button>
+                                            <button type="button" id="editar-sugestao" class="px-3 py-1 bg-white text-green-700 text-sm rounded border border-green-600 hover:bg-green-50 transition-colors">
+                                                Editar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Attachments -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Anexos
+                            </label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                                <input type="file" id="anexos" multiple class="hidden">
+                                <label for="anexos" class="cursor-pointer">
+                                    <svg class="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                    </svg>
+                                    <p class="text-sm text-gray-600">Clique para fazer upload ou arraste arquivos</p>
+                                    <p class="text-xs text-gray-400 mt-1">PNG, JPG, PDF até 10MB</p>
+                                </label>
+                                <div id="anexos-lista" class="mt-4 space-y-2"></div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="flex justify-end gap-3">
+                            <a href="index.html" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="px-6 py-3 bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 transition-colors font-medium">
+                                Enviar Chamado
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar - SLA Info -->
+        <aside class="w-72 bg-white border-l border-gray-200 fixed right-0 top-16 bottom-0 overflow-y-auto p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">SLA Hoje</h3>
+            <div class="space-y-4">
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <p class="text-sm text-blue-600 mb-1">Abertos</p>
+                    <p class="text-2xl font-bold text-blue-700" id="sla-abertos">0</p>
+                </div>
+                <div class="bg-yellow-50 rounded-lg p-4">
+                    <p class="text-sm text-yellow-600 mb-1">Vencendo em 2h</p>
+                    <p class="text-2xl font-bold text-yellow-700" id="sla-vencendo">0</p>
+                </div>
+                <div class="bg-red-50 rounded-lg p-4">
+                    <p class="text-sm text-red-600 mb-1">Atrasados</p>
+                    <p class="text-2xl font-bold text-red-700" id="sla-atrasados">0</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script type="module">
+        import { supabase } from './supabase-config.js';
+
+        // AI Classification Keywords
+        const aiKeywords = {
+            'internet': 'Rede',
+            'wifi': 'Rede',
+            'wi-fi': 'Rede',
+            'rede': 'Rede',
+            'conexão': 'Rede',
+            'conexão': 'Rede',
+            'cabo': 'Rede',
+            'rota': 'Rede',
+            'roteador': 'Rede',
+            'computador': 'Hardware',
+            'monitor': 'Hardware',
+            'teclado': 'Hardware',
+            'mouse': 'Hardware',
+            'impressora': 'Hardware',
+            'fonte': 'Hardware',
+            'placa': 'Hardware',
+            'memória': 'Hardware',
+            'hd': 'Hardware',
+            'ssd': 'Hardware',
+            'disco': 'Hardware',
+            'hardware': 'Hardware',
+            'sistema': 'Software',
+            'sigaa': 'Software',
+            'login': 'Software',
+            'software': 'Software',
+            'programa': 'Software',
+            'aplicativo': 'Software',
+            'windows': 'Software',
+            'linux': 'Software',
+            'instalar': 'Software',
+            'atualizar': 'Software',
+            'erro': 'Software',
+            'crash': 'Software',
+            'travou': 'Software',
+            'acesso': 'Software'
+        };
+
+        let suggestedCategory = null;
+
+        // Load SLA info on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check authentication
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Load user info
+            await loadUserInfo();
+
+            await loadSLAInfo();
+            setupCategoryButtons();
+            setupTitleListener();
+            setupFileUpload();
+        });
+
+        // Logout function
+        window.logout = async () => {
+            await supabase.auth.signOut();
+            window.location.href = 'login.html';
+        };
+
+        // Load user information
+        async function loadUserInfo() {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    const { data: usuario } = await supabase
+                        .from('usuarios')
+                        .select('nome, regra')
+                        .eq('email', user.email)
+                        .single();
+
+                    const userDisplay = document.getElementById('user-display');
+                    if (usuario) {
+                        const initials = usuario.nome.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                        userDisplay.innerHTML = `
+                            <div class="w-10 h-10 bg-emerald-700 rounded-full flex items-center justify-center text-white font-semibold">
+                                ${initials}
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${usuario.nome}</p>
+                                <p class="text-xs text-gray-500">${usuario.regra.charAt(0).toUpperCase() + usuario.regra.slice(1)}</p>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+            }
+        }
+
+        // Load SLA information
+        async function loadSLAInfo() {
+            try {
+                const { data: chamados } = await supabase
+                    .from('chamados')
+                    .select('criado_em')
+                    .eq('status', 'Aberto');
+
+                if (!chamados) {
+                    document.getElementById('sla-abertos').textContent = '0';
+                    document.getElementById('sla-vencendo').textContent = '0';
+                    document.getElementById('sla-atrasados').textContent = '0';
+                    return;
+                }
+
+                const now = Date.now();
+                let vencendoCount = 0;
+                let atrasadosCount = 0;
+
+                chamados.forEach(chamado => {
+                    const createdDate = new Date(chamado.criado_em);
+                    const hoursSinceCreation = (now - createdDate.getTime()) / (1000 * 60 * 60);
+                    
+                    if (hoursSinceCreation > 24) {
+                        atrasadosCount++;
+                    } else if (hoursSinceCreation > 22) {
+                        vencendoCount++;
+                    }
+                });
+
+                document.getElementById('sla-abertos').textContent = chamados.length;
+                document.getElementById('sla-vencendo').textContent = vencendoCount;
+                document.getElementById('sla-atrasados').textContent = atrasadosCount;
+            } catch (error) {
+                console.error('Error loading SLA info:', error);
+            }
+        }
+
+        // Setup category buttons
+        function setupCategoryButtons() {
+            const buttons = document.querySelectorAll('.categoria-btn');
+            const categoriaInput = document.getElementById('categoria');
+
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    buttons.forEach(btn => {
+                        btn.classList.remove('border-emerald-700', 'text-emerald-700', 'bg-emerald-50');
+                        btn.classList.add('border-gray-300', 'text-gray-700');
+                    });
+                    button.classList.remove('border-gray-300', 'text-gray-700');
+                    button.classList.add('border-emerald-700', 'text-emerald-700', 'bg-emerald-50');
+                    categoriaInput.value = button.dataset.categoria;
+                });
+            });
+        }
+
+        // Setup title listener for AI classification
+        function setupTitleListener() {
+            const tituloInput = document.getElementById('titulo');
+            const aiSuggestion = document.getElementById('ai-suggestion');
+            const aiSuggestionText = document.getElementById('ai-suggestion-text');
+            const aceitarBtn = document.getElementById('aceitar-sugestao');
+            const editarBtn = document.getElementById('editar-sugestao');
+
+            tituloInput.addEventListener('input', (e) => {
+                const text = e.target.value.toLowerCase();
+                let detectedCategory = null;
+
+                for (const [keyword, category] of Object.entries(aiKeywords)) {
+                    if (text.includes(keyword)) {
+                        detectedCategory = category;
+                        break;
+                    }
+                }
+
+                if (detectedCategory) {
+                    suggestedCategory = detectedCategory;
+                    aiSuggestionText.textContent = `A IA classificou automaticamente este chamado como ${detectedCategory}`;
+                    aiSuggestion.classList.remove('hidden');
+                } else {
+                    aiSuggestion.classList.add('hidden');
+                    suggestedCategory = null;
+                }
+            });
+
+            aceitarBtn.addEventListener('click', () => {
+                if (suggestedCategory) {
+                    const buttons = document.querySelectorAll('.categoria-btn');
+                    const categoriaInput = document.getElementById('categoria');
+                    
+                    buttons.forEach(btn => {
+                        if (btn.dataset.categoria === suggestedCategory) {
+                            btn.click();
+                        }
+                    });
+                    
+                    aiSuggestion.classList.add('hidden');
+                }
+            });
+
+            editarBtn.addEventListener('click', () => {
+                aiSuggestion.classList.add('hidden');
+            });
+        }
+
+        // Setup file upload
+        function setupFileUpload() {
+            const fileInput = document.getElementById('anexos');
+            const anexosLista = document.getElementById('anexos-lista');
+
+            fileInput.addEventListener('change', (e) => {
+                const files = e.target.files;
+                anexosLista.innerHTML = '';
+
+                Array.from(files).forEach(file => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center justify-between bg-gray-50 rounded px-3 py-2';
+                    div.innerHTML = `
+                        <span class="text-sm text-gray-700">${file.name}</span>
+                        <button type="button" class="text-red-500 hover:text-red-700" onclick="this.parentElement.remove()">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    `;
+                    anexosLista.appendChild(div);
+                });
+            });
+        }
+
+        // Form submission
+        document.getElementById('chamado-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const titulo = document.getElementById('titulo').value;
+            const descricao = document.getElementById('descricao').value;
+            const categoria = document.getElementById('categoria').value;
+            const prioridade = document.querySelector('input[name="prioridade"]:checked').value;
+
+            if (!categoria) {
+                alert('Por favor, selecione uma categoria.');
+                return;
+            }
+
+            try {
+                // Insert ticket into Supabase
+                const { data, error } = await supabase
+                    .from('chamados')
+                    .insert([
+                        {
+                            titulo: titulo,
+                            descricao_detalhada: descricao,
+                            categoria: categoria,
+                            prioridade: prioridade,
+                            status: 'Aberto',
+                            solicitante_id: 1, // Placeholder - should be actual user ID
+                            tecnico_id: null,
+                            criado_em: new Date().toISOString()
+                        }
+                    ]);
+
+                if (error) throw error;
+
+                alert('Chamado criado com sucesso!');
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Error creating ticket:', error);
+                alert('Erro ao criar chamado. Por favor, tente novamente.');
+            }
+        });
+    </script>
+</body>
+</html>

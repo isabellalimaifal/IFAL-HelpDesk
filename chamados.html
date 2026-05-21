@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFAL HelpDesk - Chamados</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="./supabase-config.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Top Bar -->
+    <header class="bg-white border-b border-gray-200 shadow-sm fixed top-0 left-0 right-0 z-50">
+        <div class="flex items-center justify-between px-6 py-4">
+            <div class="flex items-center gap-4">
+                <div class="bg-emerald-700 text-white px-4 py-2 rounded-lg font-bold text-lg">
+                    IFAL HelpDesk
+                </div>
+            </div>
+            <div class="flex-1 max-w-xl mx-8">
+                <div class="relative">
+                    <input type="text" id="search-input" placeholder="Buscar chamados..." 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700">
+                    <svg class="absolute right-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2" id="user-display">
+                    <div class="w-10 h-10 bg-emerald-700 rounded-full flex items-center justify-center text-white font-semibold">
+                        US
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">Usuário</p>
+                        <p class="text-xs text-gray-500">Técnico</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Left Sidebar -->
+        <aside class="w-64 bg-white border-r border-gray-200 fixed left-0 top-16 bottom-0 overflow-y-auto">
+            <nav class="p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="chamados.html" class="flex items-center gap-3 px-4 py-3 bg-emerald-700 text-white rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            Chamados
+                        </a>
+                    </li>
+                    <li>
+                        <a href="abrir-chamado.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Abrir Chamado
+                        </a>
+                    </li>
+                    <li>
+                        <a href="conhecimento.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                            Base de Conhecimento
+                        </a>
+                    </li>
+                    <li>
+                        <a href="equipe.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            Equipe
+                        </a>
+                    </li>
+                    <li>
+                        <a href="relatorios.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="logout()" class="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
+                            Sair
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-64 p-6">
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-900 mb-4">Todos os Chamados</h1>
+                
+                <!-- Advanced Filters -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-6">
+                    <div class="flex flex-wrap items-center gap-4">
+                        <!-- Category Filters -->
+                        <div>
+                            <label class="text-sm font-medium text-gray-700 mb-2 block">Categoria</label>
+                            <div class="flex gap-2">
+                                <button onclick="filterByCategoria('')" class="categoria-filter px-3 py-1.5 text-sm rounded-lg border border-emerald-700 bg-emerald-700 text-white" data-categoria="">
+                                    Todos
+                                </button>
+                                <button onclick="filterByCategoria('Hardware')" class="categoria-filter px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-emerald-700" data-categoria="Hardware">
+                                    Hardware
+                                </button>
+                                <button onclick="filterByCategoria('Software')" class="categoria-filter px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-emerald-700" data-categoria="Software">
+                                    Software
+                                </button>
+                                <button onclick="filterByCategoria('Rede')" class="categoria-filter px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-emerald-700" data-categoria="Rede">
+                                    Rede
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Priority Filters -->
+                        <div>
+                            <label class="text-sm font-medium text-gray-700 mb-2 block">Prioridade</label>
+                            <div class="flex gap-2">
+                                <button onclick="filterByPrioridade('')" class="prioridade-filter px-3 py-1.5 text-sm rounded-lg border border-emerald-700 bg-emerald-700 text-white" data-prioridade="">
+                                    Todas
+                                </button>
+                                <button onclick="filterByPrioridade('Alta')" class="prioridade-filter px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-emerald-700" data-prioridade="Alta">
+                                    Alta
+                                </button>
+                                <button onclick="filterByPrioridade('Média')" class="prioridade-filter px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-emerald-700" data-prioridade="Média">
+                                    Média
+                                </button>
+                                <button onclick="filterByPrioridade('Baixa')" class="prioridade-filter px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-emerald-700" data-prioridade="Baixa">
+                                    Baixa
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Status Filters -->
+                        <div>
+                            <label class="text-sm font-medium text-gray-700 mb-2 block">Status</label>
+                            <div class="flex gap-2">
+                                <button onclick="filterByStatus('')" class="status-filter px-3 py-1.5 text-sm rounded-lg border border-emerald-700 bg-emerald-700 text-white" data-status="">
+                                    Todos
+                                </button>
+                                <button onclick="filterByStatus('Aberto')" class="status-filter px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-emerald-700" data-status="Aberto">
+                                    Abertos
+                                </button>
+                                <button onclick="filterByStatus('Em progresso')" class="status-filter px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-emerald-700" data-status="Em progresso">
+                                    Em Progresso
+                                </button>
+                                <button onclick="filterByStatus('Resolvido')" class="status-filter px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-emerald-700" data-status="Resolvido">
+                                    Resolvidos
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tickets Table -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 w-24">ID</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Título</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Categoria</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Prioridade</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Solicitante</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Criado em</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="chamados-table">
+                            <tr>
+                                <td colspan="8" class="text-center py-8 text-gray-500">Carregando chamados...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { supabase } from './supabase-config.js';
+
+        let allTickets = [];
+        let currentFilters = {
+            categoria: '',
+            prioridade: '',
+            status: '',
+            search: ''
+        };
+
+        // Load tickets on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check authentication
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Load user info
+            await loadUserInfo();
+
+            await loadTickets();
+            setupSearchListener();
+        });
+
+        // Logout function
+        window.logout = async () => {
+            await supabase.auth.signOut();
+            window.location.href = 'login.html';
+        };
+
+        // Load user information
+        async function loadUserInfo() {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    const { data: usuario } = await supabase
+                        .from('usuarios')
+                        .select('nome, regra')
+                        .eq('email', user.email)
+                        .single();
+
+                    const userDisplay = document.getElementById('user-display');
+                    if (usuario) {
+                        const initials = usuario.nome.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                        userDisplay.innerHTML = `
+                            <div class="w-10 h-10 bg-emerald-700 rounded-full flex items-center justify-center text-white font-semibold">
+                                ${initials}
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${usuario.nome}</p>
+                                <p class="text-xs text-gray-500">${usuario.regra.charAt(0).toUpperCase() + usuario.regra.slice(1)}</p>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+            }
+        }
+
+        // Load tickets from Supabase
+        async function loadTickets() {
+            try {
+                const { data: chamados, error } = await supabase
+                    .from('chamados')
+                    .select(`
+                        *,
+                        solicitante:usuarios!chamados_solicitante_id_fkey(nome)
+                    `)
+                    .order('criado_em', { ascending: false });
+
+                if (error) throw error;
+
+                allTickets = chamados || [];
+                applyFilters();
+            } catch (error) {
+                console.error('Error loading tickets:', error);
+                document.getElementById('chamados-table').innerHTML = '<tr><td colspan="8" class="text-center py-8 text-red-500">Erro ao carregar chamados</td></tr>';
+            }
+        }
+
+        // Setup search listener
+        function setupSearchListener() {
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', (e) => {
+                currentFilters.search = e.target.value.toLowerCase();
+                applyFilters();
+            });
+        }
+
+        // Filter by category
+        window.filterByCategoria = (categoria) => {
+            currentFilters.categoria = categoria;
+            updateFilterButtons('categoria', categoria);
+            applyFilters();
+        };
+
+        // Filter by priority
+        window.filterByPrioridade = (prioridade) => {
+            currentFilters.prioridade = prioridade;
+            updateFilterButtons('prioridade', prioridade);
+            applyFilters();
+        };
+
+        // Filter by status
+        window.filterByStatus = (status) => {
+            currentFilters.status = status;
+            updateFilterButtons('status', status);
+            applyFilters();
+        };
+
+        // Update filter button styles
+        function updateFilterButtons(type, value) {
+            const buttons = document.querySelectorAll(`.${type}-filter`);
+            buttons.forEach(btn => {
+                if (btn.dataset[type] === value) {
+                    btn.classList.remove('border-gray-300', 'text-gray-700');
+                    btn.classList.add('border-emerald-700', 'bg-emerald-700', 'text-white');
+                } else {
+                    btn.classList.remove('border-emerald-700', 'bg-emerald-700', 'text-white');
+                    btn.classList.add('border-gray-300', 'text-gray-700');
+                }
+            });
+        }
+
+        // Apply all filters
+        function applyFilters() {
+            const filteredTickets = allTickets.filter(chamado => {
+                if (currentFilters.categoria && chamado.categoria !== currentFilters.categoria) return false;
+                if (currentFilters.prioridade && chamado.prioridade !== currentFilters.prioridade) return false;
+                if (currentFilters.status && chamado.status !== currentFilters.status) return false;
+                if (currentFilters.search) {
+                    const searchLower = currentFilters.search;
+                    if (!chamado.titulo.toLowerCase().includes(searchLower) && 
+                        !chamado.descricao_detalhada.toLowerCase().includes(searchLower)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            renderTable(filteredTickets);
+        }
+
+        // Render table
+        function renderTable(tickets) {
+            const tableBody = document.getElementById('chamados-table');
+            
+            if (tickets.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8" class="text-center py-8 text-gray-500">Nenhum chamado encontrado com os filtros selecionados</td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = tickets.map(chamado => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onclick="window.location.href='detalhes.html?id=${chamado.id}'">
+                    <td class="py-3 px-4 text-sm text-gray-900 font-mono text-xs">#${chamado.id.slice(0, 8)}</td>
+                    <td class="py-3 px-4 text-sm font-medium text-gray-900">${chamado.titulo}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(chamado.categoria)}">
+                            ${chamado.categoria}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(chamado.prioridade)}">
+                            ${chamado.prioridade}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(chamado.status)}">
+                            ${chamado.status}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-sm text-gray-600">${chamado.solicitante ? chamado.solicitante.nome : '-'}</td>
+                    <td class="py-3 px-4 text-sm text-gray-600">${formatDate(chamado.criado_em)}</td>
+                    <td class="py-3 px-4">
+                        <a href="detalhes.html?id=${chamado.id}" class="text-emerald-700 hover:text-emerald-800 text-sm font-medium" onclick="event.stopPropagation()">
+                            Ver detalhes
+                        </a>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Helper functions
+        function getCategoryColor(categoria) {
+            const colors = {
+                'Hardware': 'bg-orange-100 text-orange-700',
+                'Software': 'bg-blue-100 text-blue-700',
+                'Rede': 'bg-green-100 text-green-700'
+            };
+            return colors[categoria] || 'bg-gray-100 text-gray-700';
+        }
+
+        function getPriorityColor(prioridade) {
+            const colors = {
+                'Baixa': 'bg-green-100 text-green-700',
+                'Média': 'bg-yellow-100 text-yellow-700',
+                'Alta': 'bg-red-100 text-red-700'
+            };
+            return colors[prioridade] || 'bg-gray-100 text-gray-700';
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'Aberto': 'bg-blue-100 text-blue-700',
+                'Em progresso': 'bg-yellow-100 text-yellow-700',
+                'Resolvido': 'bg-green-100 text-green-700'
+            };
+            return colors[status] || 'bg-gray-100 text-gray-700';
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+    </script>
+</body>
+</html>

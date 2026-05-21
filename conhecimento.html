@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFAL HelpDesk - Base de Conhecimento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="./supabase-config.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Top Bar -->
+    <header class="bg-white border-b border-gray-200 shadow-sm fixed top-0 left-0 right-0 z-50">
+        <div class="flex items-center justify-between px-6 py-4">
+            <div class="flex items-center gap-4">
+                <div class="bg-emerald-700 text-white px-4 py-2 rounded-lg font-bold text-lg">
+                    IFAL HelpDesk
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2" id="user-display">
+                    <div class="w-10 h-10 bg-emerald-700 rounded-full flex items-center justify-center text-white font-semibold">
+                        US
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">Usuário</p>
+                        <p class="text-xs text-gray-500">Técnico</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Left Sidebar -->
+        <aside class="w-64 bg-white border-r border-gray-200 fixed left-0 top-16 bottom-0 overflow-y-auto">
+            <nav class="p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="chamados.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            Chamados
+                        </a>
+                    </li>
+                    <li>
+                        <a href="abrir-chamado.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Abrir Chamado
+                        </a>
+                    </li>
+                    <li>
+                        <a href="conhecimento.html" class="flex items-center gap-3 px-4 py-3 bg-emerald-700 text-white rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                            Base de Conhecimento
+                        </a>
+                    </li>
+                    <li>
+                        <a href="equipe.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            Equipe
+                        </a>
+                    </li>
+                    <li>
+                        <a href="relatorios.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="logout()" class="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
+                            Sair
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-64 p-6">
+            <div class="max-w-4xl mx-auto">
+                <h1 class="text-2xl font-bold text-gray-900 mb-6">Base de Conhecimento</h1>
+                <p class="text-gray-600 mb-8">Encontre respostas para as perguntas mais frequentes sobre suporte técnico do IFAL.</p>
+
+                <div class="flex gap-6">
+                    <!-- Category Menu -->
+                    <aside class="w-64 flex-shrink-0">
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sticky top-24">
+                            <h3 class="font-semibold text-gray-900 mb-4">Categorias</h3>
+                            <ul class="space-y-2">
+                                <li>
+                                    <button onclick="filterCategory('todas')" class="category-btn w-full text-left px-3 py-2 rounded-lg bg-emerald-700 text-white" data-category="todas">
+                                        Todas
+                                    </button>
+                                </li>
+                                <li>
+                                    <button onclick="filterCategory('rede')" class="category-btn w-full text-left px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100" data-category="rede">
+                                        🌐 Rede e Internet
+                                    </button>
+                                </li>
+                                <li>
+                                    <button onclick="filterCategory('hardware')" class="category-btn w-full text-left px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100" data-category="hardware">
+                                        💻 Hardware
+                                    </button>
+                                </li>
+                                <li>
+                                    <button onclick="filterCategory('software')" class="category-btn w-full text-left px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100" data-category="software">
+                                        📱 Software
+                                    </button>
+                                </li>
+                                <li>
+                                    <button onclick="filterCategory('sigaa')" class="category-btn w-full text-left px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100" data-category="sigaa">
+                                        🎓 SIGAA
+                                    </button>
+                                </li>
+                                <li>
+                                    <button onclick="filterCategory('impressora')" class="category-btn w-full text-left px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100" data-category="impressora">
+                                        🖨️ Impressoras
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </aside>
+
+                    <!-- FAQ Accordion -->
+                    <div class="flex-1">
+                        <div id="faq-container" class="space-y-4">
+                            <!-- FAQ items will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { supabase } from './supabase-config.js';
+
+        const faqData = [
+            {
+                id: 1,
+                category: 'rede',
+                question: 'Como conectar no Wi-Fi institucional?',
+                answer: `Para conectar no Wi-Fi do IFAL:
+1. Abra as configurações de rede do seu dispositivo
+2. Selecione a rede "IFAL-WiFi"
+3. Use seu e-mail institucional (@ifal.edu.br ou @aluno.ifal.edu.br) como usuário
+4. A senha é a mesma do seu e-mail
+5. Se tiver problemas, entre em contato com o suporte técnico`
+            },
+            {
+                id: 2,
+                category: 'rede',
+                question: 'O Wi-Fi está lento, o que fazer?',
+                answer: `Se o Wi-Fi estiver lento:
+1. Verifique se outros dispositivos estão funcionando normalmente
+2. Reinicie seu dispositivo
+3. Desconecte e reconecte à rede
+4. Verifique se você está próximo ao roteador
+5. Se o problema persistir, abra um chamado no HelpDesk`
+            },
+            {
+                id: 3,
+                category: 'hardware',
+                question: 'Meu computador não liga, o que fazer?',
+                answer: `Se o computador não liga:
+1. Verifique se o cabo de energia está conectado corretamente
+2. Confirme que a tomada está funcionando
+3. Pressione o botão de power por 10 segundos
+4. Verifique se há luzes indicativas no gabinete
+5. Se nada funcionar, abra um chamado para manutenção`
+            },
+            {
+                id: 4,
+                category: 'hardware',
+                question: 'Como solicitar um novo equipamento?',
+                answer: `Para solicitar novos equipamentos:
+1. Entre em contato com a coordenação do seu setor
+2. A coordenação fará a solicitação formal
+3. O setor de TI avaliará a necessidade
+4. Após aprovação, o equipamento será adquirido
+5. A instalação será feita pela equipe de TI`
+            },
+            {
+                id: 5,
+                category: 'software',
+                question: 'Como instalar software autorizado?',
+                answer: `Para instalar software:
+1. Verifique na lista de softwares autorizados pelo IFAL
+2. Faça a solicitação através do HelpDesk
+3. A equipe de TI fará a instalação remota ou presencial
+4. Não instale software não autorizado
+5. Softwares piratas são proibidos`
+            },
+            {
+                id: 6,
+                category: 'sigaa',
+                question: 'Não consigo acessar o SIGAA',
+                answer: `Se não conseguir acessar o SIGAA:
+1. Verifique se seu e-mail e senha estão corretos
+2. Tente recuperar a senha pelo link "Esqueci a senha"
+3. Limpe o cache do navegador
+4. Tente acessar em outro navegador
+5. Se o problema persistir, abra um chamado informando o erro`
+            },
+            {
+                id: 7,
+                category: 'sigaa',
+                question: 'Como fazer matrícula online?',
+                answer: `Para fazer matrícula online:
+1. Acesse o SIGAA com suas credenciais
+2. Vá em "Portais" > "Portal do Discente"
+3. Selecione "Matrícula Online"
+4. Escolha as turmas disponíveis
+5. Confirme a matrícula
+6. Imprima o comprovante`
+            },
+            {
+                id: 8,
+                category: 'impressora',
+                question: 'Como configurar impressora no laboratório?',
+                answer: `Para configurar impressora:
+1. Verifique se a impressora está ligada e com papel
+2. No Windows, vá em Configurações > Impressoras
+3. Clique em "Adicionar impressora"
+4. Selecione a impressora da rede
+5. Siga o assistente de configuração
+6. Imprima uma página de teste`
+            },
+            {
+                id: 9,
+                category: 'impressora',
+                question: 'A impressora está com erro, o que fazer?',
+                answer: `Se a impressora der erro:
+1. Verifique se há papel suficiente
+2. Confirme se há tinta/toner
+3. Verifique se não há papel atolado
+4. Reinicie a impressora
+5. Se o erro persistir, abra um chamado`
+            }
+        ];
+
+        let currentCategory = 'todas';
+
+        // Load FAQ on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check authentication
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Load user info
+            await loadUserInfo();
+
+            renderFAQ();
+        });
+
+        // Logout function
+        window.logout = async () => {
+            await supabase.auth.signOut();
+            window.location.href = 'login.html';
+        };
+
+        // Load user information
+        async function loadUserInfo() {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    const { data: usuario } = await supabase
+                        .from('usuarios')
+                        .select('nome, regra')
+                        .eq('email', user.email)
+                        .single();
+
+                    const userDisplay = document.getElementById('user-display');
+                    if (usuario) {
+                        const initials = usuario.nome.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                        userDisplay.innerHTML = `
+                            <div class="w-10 h-10 bg-emerald-700 rounded-full flex items-center justify-center text-white font-semibold">
+                                ${initials}
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${usuario.nome}</p>
+                                <p class="text-xs text-gray-500">${usuario.regra.charAt(0).toUpperCase() + usuario.regra.slice(1)}</p>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+            }
+        }
+
+        // Filter by category
+        window.filterCategory = (category) => {
+            currentCategory = category;
+            
+            // Update button styles
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if (btn.dataset.category === category) {
+                    btn.classList.remove('text-gray-700', 'hover:bg-gray-100');
+                    btn.classList.add('bg-emerald-700', 'text-white');
+                } else {
+                    btn.classList.remove('bg-emerald-700', 'text-white');
+                    btn.classList.add('text-gray-700', 'hover:bg-gray-100');
+                }
+            });
+
+            renderFAQ();
+        };
+
+        // Render FAQ items
+        function renderFAQ() {
+            const container = document.getElementById('faq-container');
+            const filteredFAQ = currentCategory === 'todas' 
+                ? faqData 
+                : faqData.filter(item => item.category === currentCategory);
+
+            if (filteredFAQ.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">Nenhum artigo encontrado nesta categoria.</p>';
+                return;
+            }
+
+            container.innerHTML = filteredFAQ.map(item => `
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <button onclick="toggleAccordion(${item.id})" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors">
+                        <span class="font-medium text-gray-900">${item.question}</span>
+                        <svg id="icon-${item.id}" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div id="content-${item.id}" class="hidden px-6 pb-4">
+                        <div class="pt-4 border-t border-gray-100">
+                            <p class="text-gray-700 whitespace-pre-line">${item.answer}</p>
+                            <div class="mt-4 flex items-center gap-2">
+                                <span class="text-sm text-gray-500">Este artigo foi útil?</span>
+                                <button onclick="markUseful(${item.id}, true)" class="text-emerald-700 hover:text-emerald-800 text-sm font-medium">
+                                    Sim
+                                </button>
+                                <span class="text-gray-300">•</span>
+                                <button onclick="markUseful(${item.id}, false)" class="text-gray-500 hover:text-gray-700 text-sm">
+                                    Não
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Toggle accordion
+        window.toggleAccordion = (id) => {
+            const content = document.getElementById(`content-${id}`);
+            const icon = document.getElementById(`icon-${id}`);
+            
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        };
+
+        // Mark article as useful
+        window.markUseful = (id, useful) => {
+            if (useful) {
+                alert('Obrigado pelo feedback!');
+            } else {
+                alert('Obrigado pelo feedback. Vamos melhorar este artigo.');
+            }
+        };
+    </script>
+</body>
+</html>

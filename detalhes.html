@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFAL HelpDesk - Detalhes do Chamado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="./supabase-config.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Top Bar -->
+    <header class="bg-white border-b border-gray-200 shadow-sm fixed top-0 left-0 right-0 z-50">
+        <div class="flex items-center justify-between px-6 py-4">
+            <div class="flex items-center gap-4">
+                <div class="bg-emerald-700 text-white px-4 py-2 rounded-lg font-bold text-lg">
+                    IFAL HelpDesk
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2" id="user-display">
+                    <div class="w-10 h-10 bg-emerald-700 rounded-full flex items-center justify-center text-white font-semibold">
+                        US
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">Usuário</p>
+                        <p class="text-xs text-gray-500">Técnico</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- Left Sidebar -->
+        <aside class="w-64 bg-white border-r border-gray-200 fixed left-0 top-16 bottom-0 overflow-y-auto">
+            <nav class="p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="chamados.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            Chamados
+                        </a>
+                    </li>
+                    <li>
+                        <a href="abrir-chamado.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Abrir Chamado
+                        </a>
+                    </li>
+                    <li>
+                        <a href="conhecimento.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                            Base de Conhecimento
+                        </a>
+                    </li>
+                    <li>
+                        <a href="equipe.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            Equipe
+                        </a>
+                    </li>
+                    <li>
+                        <a href="relatorios.html" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="logout()" class="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
+                            Sair
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-64 mr-72 p-6">
+            <div class="max-w-4xl mx-auto">
+                <!-- Back Button -->
+                <a href="dashboard.html" class="inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-800 mb-6">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Voltar ao Dashboard
+                </a>
+
+                <!-- Ticket Details Card -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h1 id="ticket-titulo" class="text-2xl font-bold text-gray-900 mb-2">Carregando...</h1>
+                            <div class="flex items-center gap-3">
+                                <span id="ticket-id" class="text-sm text-gray-500"></span>
+                                <span class="text-gray-300">•</span>
+                                <span id="ticket-data" class="text-sm text-gray-500"></span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <span id="ticket-status" class="px-3 py-1 text-sm font-medium rounded-full"></span>
+                            <span id="ticket-prioridade" class="px-3 py-1 text-sm font-medium rounded-full"></span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-200 pt-4">
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <p class="text-sm text-gray-500 mb-1">Solicitante</p>
+                                <p id="ticket-solicitante" class="text-sm font-medium text-gray-900">-</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 mb-1">Categoria</p>
+                                <p id="ticket-categoria" class="text-sm font-medium text-gray-900">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-2">Descrição Detalhada</h3>
+                        <p id="ticket-descricao" class="text-gray-700 whitespace-pre-wrap">-</p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-6 pt-4 border-t border-gray-200 flex gap-3">
+                        <button id="btn-resolver" onclick="marcarComoResolvido()" class="px-4 py-2 bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 transition-colors">
+                            Marcar como Resolvido
+                        </button>
+                        <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Encaminhar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Comments Section -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">Respostas Colaborativas</h2>
+                    
+                    <!-- Comments List -->
+                    <div id="comentarios-lista" class="space-y-4 mb-6">
+                        <p class="text-gray-500">Carregando comentários...</p>
+                    </div>
+
+                    <!-- Add Comment Form -->
+                    <div class="border-t border-gray-200 pt-4">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-3">Adicionar Resposta Colaborativa</h3>
+                        <div class="flex gap-3">
+                            <div class="w-10 h-10 bg-emerald-700 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
+                                US
+                            </div>
+                            <div class="flex-1">
+                                <textarea id="novo-comentario" rows="3" 
+                                          placeholder="Escreva sua resposta..."
+                                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:border-transparent resize-none"></textarea>
+                                <div class="flex justify-end gap-2 mt-2">
+                                    <button onclick="document.getElementById('novo-comentario').value = ''" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                        Cancelar
+                                    </button>
+                                    <button onclick="adicionarComentario()" class="px-4 py-2 bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 transition-colors">
+                                        Adicionar resposta colaborativa
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="w-72 bg-white border-l border-gray-200 fixed right-0 top-16 bottom-0 overflow-y-auto p-6 z-40">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Resumo</h3>
+            <div class="space-y-4">
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">ID do Chamado</p>
+                    <p id="sidebar-id" class="text-sm font-medium text-gray-900 font-mono text-xs">-</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Data de Abertura</p>
+                    <p id="sidebar-data" class="text-sm font-medium text-gray-900">-</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">SLA Restante</p>
+                    <p id="sidebar-sla" class="text-sm font-medium text-emerald-700">-</p>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Equipe Online</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-emerald-700 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                            M
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">Marcos</p>
+                            <p class="text-xs text-green-600">Online</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-blue-700 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                            A
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">Ana</p>
+                            <p class="text-xs text-green-600">Online</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Base de Conhecimento</h3>
+                <div class="space-y-2">
+                    <a href="#" class="block text-sm text-emerald-700 hover:text-emerald-800">
+                        • Como reiniciar o computador
+                    </a>
+                    <a href="#" class="block text-sm text-emerald-700 hover:text-emerald-800">
+                        • Configuração de rede Wi-Fi
+                    </a>
+                    <a href="#" class="block text-sm text-emerald-700 hover:text-emerald-800">
+                        • Instalação de impressora
+                    </a>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script type="module">
+        import { supabase } from './supabase-config.js';
+
+        let ticketId = null;
+        let ticketData = null;
+
+        // Load ticket details on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check authentication
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Load user info
+            await loadUserInfo();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            ticketId = urlParams.get('id');
+
+            if (!ticketId) {
+                alert('ID do chamado não fornecido');
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            await loadTicketDetails();
+            await loadComments();
+        });
+
+        // Logout function
+        window.logout = async () => {
+            await supabase.auth.signOut();
+            window.location.href = 'login.html';
+        };
+
+        // Load user information
+        async function loadUserInfo() {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    const { data: usuario } = await supabase
+                        .from('usuarios')
+                        .select('nome, regra')
+                        .eq('email', user.email)
+                        .single();
+
+                    const userDisplay = document.getElementById('user-display');
+                    if (usuario) {
+                        const initials = usuario.nome.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                        userDisplay.innerHTML = `
+                            <div class="w-10 h-10 bg-emerald-700 rounded-full flex items-center justify-center text-white font-semibold">
+                                ${initials}
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${usuario.nome}</p>
+                                <p class="text-xs text-gray-500">${usuario.regra.charAt(0).toUpperCase() + usuario.regra.slice(1)}</p>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+            }
+        }
+
+        // Load ticket details
+        async function loadTicketDetails() {
+            try {
+                const { data: chamado, error } = await supabase
+                    .from('chamados')
+                    .select(`
+                        *,
+                        solicitante:usuarios!chamados_solicitante_id_fkey(nome),
+                        tecnico:usuarios!chamados_tecnico_id_fkey(nome)
+                    `)
+                    .eq('id', ticketId)
+                    .single();
+
+                if (error) throw error;
+
+                if (!chamado) {
+                    alert('Chamado não encontrado');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                ticketData = chamado;
+
+                // Update UI
+                document.getElementById('ticket-titulo').textContent = chamado.titulo;
+                document.getElementById('ticket-id').textContent = `#${chamado.id.slice(0, 8)}`;
+                document.getElementById('ticket-data').textContent = formatDate(chamado.criado_em);
+                document.getElementById('ticket-solicitante').textContent = chamado.solicitante ? chamado.solicitante.nome : 'Não atribuído';
+                document.getElementById('ticket-categoria').textContent = chamado.categoria;
+                document.getElementById('ticket-descricao').textContent = chamado.descricao_detalhada;
+
+                // Status badge
+                const statusBadge = document.getElementById('ticket-status');
+                statusBadge.textContent = chamado.status;
+                statusBadge.className = `px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(chamado.status)}`;
+
+                // Priority badge
+                const priorityBadge = document.getElementById('ticket-prioridade');
+                priorityBadge.textContent = chamado.prioridade;
+                priorityBadge.className = `px-3 py-1 text-sm font-medium rounded-full ${getPriorityColor(chamado.prioridade)}`;
+
+                // Sidebar
+                document.getElementById('sidebar-id').textContent = `#${chamado.id.slice(0, 8)}`;
+                document.getElementById('sidebar-data').textContent = formatDate(chamado.criado_em);
+
+                // Calculate SLA
+                const createdDate = new Date(chamado.criado_em);
+                const hoursSinceCreation = (Date.now() - createdDate.getTime()) / (1000 * 60 * 60);
+                const slaRemaining = Math.max(0, 24 - hoursSinceCreation);
+                document.getElementById('sidebar-sla').textContent = `${slaRemaining.toFixed(1)}h`;
+
+                // Hide resolve button if already resolved
+                if (chamado.status === 'Resolvido') {
+                    document.getElementById('btn-resolver').style.display = 'none';
+                }
+
+            } catch (error) {
+                console.error('Error loading ticket:', error);
+                alert('Erro ao carregar detalhes do chamado');
+            }
+        }
+
+        // Load comments
+        async function loadComments() {
+            try {
+                const { data: comentarios, error } = await supabase
+                    .from('comentarios')
+                    .select(`
+                        *,
+                        usuario:usuarios(nome, regra)
+                    `)
+                    .eq('chamado_id', ticketId)
+                    .order('criado_em', { ascending: true });
+
+                if (error) throw error;
+
+                const comentariosLista = document.getElementById('comentarios-lista');
+                
+                if (!comentarios || comentarios.length === 0) {
+                    comentariosLista.innerHTML = '<p class="text-gray-500">Nenhuma resposta ainda. Seja o primeiro a responder!</p>';
+                    return;
+                }
+
+                comentariosLista.innerHTML = comentarios.map(comentario => `
+                    <div class="flex gap-3">
+                        <div class="w-10 h-10 bg-emerald-700 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
+                            ${comentario.usuario ? comentario.usuario.nome.charAt(0) : 'U'}
+                        </div>
+                        <div class="flex-1 bg-gray-50 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <div>
+                                    <span class="font-medium text-gray-900">${comentario.usuario ? comentario.usuario.nome : 'Usuário'}</span>
+                                    <span class="text-xs text-gray-500 ml-2">(${comentario.usuario ? comentario.usuario.regra : 'Usuário'})</span>
+                                </div>
+                                <span class="text-xs text-gray-500">${formatDate(comentario.criado_em)}</span>
+                            </div>
+                            <p class="text-gray-700 whitespace-pre-wrap">${comentario.mensagem}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading comments:', error);
+                document.getElementById('comentarios-lista').innerHTML = '<p class="text-red-500">Erro ao carregar comentários</p>';
+            }
+        }
+
+        // Add new comment
+        async function adicionarComentario() {
+            const comentarioInput = document.getElementById('novo-comentario');
+            const mensagem = comentarioInput.value.trim();
+
+            if (!mensagem) {
+                alert('Por favor, escreva uma mensagem.');
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('comentarios')
+                    .insert([
+                        {
+                            chamado_id: ticketId,
+                            usuario_id: 1, // Placeholder - should be actual user ID
+                            mensagem: mensagem,
+                            criado_em: new Date().toISOString()
+                        }
+                    ]);
+
+                if (error) throw error;
+
+                // Clear input and reload comments
+                comentarioInput.value = '';
+                await loadComments();
+            } catch (error) {
+                console.error('Error adding comment:', error);
+                alert('Erro ao adicionar comentário. Por favor, tente novamente.');
+            }
+        }
+
+        // Mark ticket as resolved
+        async function marcarComoResolvido() {
+            if (!confirm('Tem certeza que deseja marcar este chamado como resolvido?')) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('chamados')
+                    .update({ status: 'Resolvido' })
+                    .eq('id', ticketId);
+
+                if (error) throw error;
+
+                alert('Chamado marcado como resolvido com sucesso!');
+                await loadTicketDetails();
+            } catch (error) {
+                console.error('Error updating ticket:', error);
+                alert('Erro ao atualizar status do chamado. Por favor, tente novamente.');
+            }
+        }
+
+        // Helper functions
+        function getStatusColor(status) {
+            const colors = {
+                'Aberto': 'bg-blue-100 text-blue-700',
+                'Em progresso': 'bg-yellow-100 text-yellow-700',
+                'Resolvido': 'bg-green-100 text-green-700'
+            };
+            return colors[status] || 'bg-gray-100 text-gray-700';
+        }
+
+        function getPriorityColor(prioridade) {
+            const colors = {
+                'Baixa': 'bg-green-100 text-green-700',
+                'Média': 'bg-yellow-100 text-yellow-700',
+                'Alta': 'bg-red-100 text-red-700'
+            };
+            return colors[prioridade] || 'bg-gray-100 text-gray-700';
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+    </script>
+</body>
+</html>
