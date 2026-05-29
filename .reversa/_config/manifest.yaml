@@ -1,0 +1,32 @@
+installation:
+  version: 1.2.43
+  installDate: 2026-05-29T19:29:11.731Z
+  lastUpdated: 2026-05-29T19:29:11.731Z
+
+engines:
+  - gemini-cli
+  - github-copilot
+
+agents:
+  - reversa
+  - reversa-scout
+  - reversa-archaeologist
+  - reversa-detective
+  - reversa-architect
+  - reversa-writer
+  - reversa-reviewer
+  - reversa-visor
+  - reversa-data-master
+  - reversa-design-system
+  - reversa-agents-help
+  - reversa-reconstructor
+  - reversa-docs
+  - reversa-docs-mapper
+  - reversa-docs-analyst
+  - reversa-docs-storyteller
+  - reversa-docs-publisher
+  - reversa-arquitetura-3d
+  - reversa-selo-generativo
+  - reversa-highcharts-visualizer
+  - reversa-especialista-d3
+  - reversa-image-prompt-json
