@@ -161,8 +161,11 @@
                                 <button onclick="filterByStatus('Aberto')" class="status-filter px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-emerald-700" data-status="Aberto">
                                     Abertos
                                 </button>
-                                <button onclick="filterByStatus('Em progresso')" class="status-filter px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-emerald-700" data-status="Em progresso">
-                                    Em Progresso
+                                <button onclick="filterByStatus('Em andamento')" class="status-filter px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-emerald-700" data-status="Em andamento">
+                                    Em Andamento
+                                </button>
+                                <button onclick="filterByStatus('Pendente')" class="status-filter px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-emerald-700" data-status="Pendente">
+                                    Pendentes
                                 </button>
                                 <button onclick="filterByStatus('Resolvido')" class="status-filter px-3 py-1.5 text-sm rounded-lg border border-gray-300 text-gray-700 hover:border-emerald-700" data-status="Resolvido">
                                     Resolvidos
@@ -230,6 +233,8 @@
         // Logout function
         window.logout = async () => {
             await supabase.auth.signOut();
+            localStorage.removeItem('userType');
+            localStorage.removeItem('userEmail');
             window.location.href = 'login.html';
         };
 
@@ -408,7 +413,9 @@
         function getStatusColor(status) {
             const colors = {
                 'Aberto': 'bg-blue-100 text-blue-700',
+                'Em andamento': 'bg-yellow-100 text-yellow-700',
                 'Em progresso': 'bg-yellow-100 text-yellow-700',
+                'Pendente': 'bg-orange-100 text-orange-700',
                 'Resolvido': 'bg-green-100 text-green-700'
             };
             return colors[status] || 'bg-gray-100 text-gray-700';

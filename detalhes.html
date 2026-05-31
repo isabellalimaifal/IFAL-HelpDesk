@@ -142,14 +142,30 @@
                         <p id="ticket-descricao" class="text-gray-700 whitespace-pre-wrap">-</p>
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="mt-6 pt-4 border-t border-gray-200 flex gap-3">
+                    <!-- Action Buttons - Only visible for technicians -->
+                    <div id="action-buttons" class="mt-6 pt-4 border-t border-gray-200 flex gap-3 hidden">
                         <button id="btn-resolver" onclick="marcarComoResolvido()" class="px-4 py-2 bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 transition-colors">
                             Marcar como Resolvido
                         </button>
-                        <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        <button onclick="abrirModalEncaminhar()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                             Encaminhar
                         </button>
+                    </div>
+
+                    <!-- Status Control Panel - Only visible for technicians -->
+                    <div id="status-control-panel" class="mt-6 pt-4 border-t border-gray-200 hidden">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-3">Alterar Status do Chamado</h3>
+                        <div class="flex gap-3 items-center">
+                            <select id="status-select" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:border-transparent">
+                                <option value="Aberto">Aberto</option>
+                                <option value="Em andamento">Em andamento</option>
+                                <option value="Pendente">Pendente</option>
+                                <option value="Resolvido">Resolvido</option>
+                            </select>
+                            <button onclick="alterarStatus()" class="px-4 py-2 bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 transition-colors">
+                                Atualizar Status
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -247,6 +263,32 @@
         </aside>
     </div>
 
+    <!-- Modal de Encaminhar -->
+    <div id="modal-encaminhar" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md mx-4">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Encaminhar Chamado</h3>
+            <p class="text-sm text-gray-600 mb-4">Selecione o técnico para encaminhar este chamado:</p>
+            
+            <div class="mb-4">
+                <label for="tecnico-select" class="block text-sm font-medium text-gray-700 mb-2">
+                    Técnico
+                </label>
+                <select id="tecnico-select" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:border-transparent">
+                    <option value="">Carregando técnicos...</option>
+                </select>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button onclick="fecharModalEncaminhar()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </button>
+                <button onclick="encaminharChamado()" class="px-4 py-2 bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 transition-colors">
+                    Encaminhar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { supabase } from './supabase-config.js';
 
@@ -262,11 +304,16 @@
                 return;
             }
 
+            // Check user type and show/hide controls
+            checkUserTypeAndShowControls();
+
             // Load user info
             await loadUserInfo();
 
             const urlParams = new URLSearchParams(window.location.search);
             ticketId = urlParams.get('id');
+
+            console.log('Ticket ID obtido da URL:', ticketId);
 
             if (!ticketId) {
                 alert('ID do chamado não fornecido');
@@ -281,8 +328,27 @@
         // Logout function
         window.logout = async () => {
             await supabase.auth.signOut();
+            localStorage.removeItem('userType');
+            localStorage.removeItem('userEmail');
             window.location.href = 'login.html';
         };
+
+        // Check user type and show/hide controls
+        function checkUserTypeAndShowControls() {
+            const userType = localStorage.getItem('userType');
+            const actionButtons = document.getElementById('action-buttons');
+            const statusControlPanel = document.getElementById('status-control-panel');
+
+            if (userType === 'tecnico') {
+                // Show controls for technicians
+                actionButtons.classList.remove('hidden');
+                statusControlPanel.classList.remove('hidden');
+            } else {
+                // Hide controls for students
+                actionButtons.classList.add('hidden');
+                statusControlPanel.classList.add('hidden');
+            }
+        }
 
         // Load user information
         async function loadUserInfo() {
@@ -385,8 +451,7 @@
                         *,
                         usuario:usuarios(nome, regra)
                     `)
-                    .eq('chamado_id', ticketId)
-                    .order('criado_em', { ascending: true });
+                    .eq('chamado_id', ticketId);
 
                 if (error) throw error;
 
@@ -408,7 +473,6 @@
                                     <span class="font-medium text-gray-900">${comentario.usuario ? comentario.usuario.nome : 'Usuário'}</span>
                                     <span class="text-xs text-gray-500 ml-2">(${comentario.usuario ? comentario.usuario.regra : 'Usuário'})</span>
                                 </div>
-                                <span class="text-xs text-gray-500">${formatDate(comentario.criado_em)}</span>
                             </div>
                             <p class="text-gray-700 whitespace-pre-wrap">${comentario.mensagem}</p>
                         </div>
@@ -421,9 +485,13 @@
         }
 
         // Add new comment
-        async function adicionarComentario() {
+        window.adicionarComentario = async function() {
             const comentarioInput = document.getElementById('novo-comentario');
             const mensagem = comentarioInput.value.trim();
+
+            console.log('=== INICIANDO ADICIONAR COMENTÁRIO ===');
+            console.log('Input de comentário:', comentarioInput);
+            console.log('Mensagem:', mensagem);
 
             if (!mensagem) {
                 alert('Por favor, escreva uma mensagem.');
@@ -431,25 +499,78 @@
             }
 
             try {
-                const { error } = await supabase
+                console.log('Ticket ID:', ticketId);
+                console.log('Ticket ID tipo:', typeof ticketId);
+                
+                if (!ticketId) {
+                    alert('Erro: ID do chamado não encontrado. Por favor, recarregue a página.');
+                    return;
+                }
+                
+                const userEmail = localStorage.getItem('userEmail');
+                console.log('User email do localStorage:', userEmail);
+                
+                if (!userEmail) {
+                    alert('Erro: usuário não identificado. Por favor, faça login novamente.');
+                    return;
+                }
+
+                console.log('Buscando usuário no Supabase...');
+                const { data: usuario, error: userError } = await supabase
+                    .from('usuarios')
+                    .select('id')
+                    .eq('email', userEmail)
+                    .single();
+
+                console.log('Resultado da busca de usuário:', usuario);
+                console.log('Erro na busca de usuário:', userError);
+
+                if (userError) {
+                    console.error('Erro ao buscar usuário:', userError);
+                    alert('Erro ao identificar usuário: ' + userError.message);
+                    return;
+                }
+
+                if (!usuario) {
+                    console.error('Usuário não encontrado para email:', userEmail);
+                    alert('Erro ao identificar usuário. Por favor, faça login novamente.');
+                    return;
+                }
+
+                console.log('Usuário encontrado com ID:', usuario.id);
+                console.log('Preparando para inserir comentário...');
+                console.log('Dados do comentário:', {
+                    chamado_id: ticketId,
+                    usuario_id: usuario.id,
+                    mensagem: mensagem
+                });
+
+                const { data, error } = await supabase
                     .from('comentarios')
                     .insert([
                         {
                             chamado_id: ticketId,
-                            usuario_id: 1, // Placeholder - should be actual user ID
-                            mensagem: mensagem,
-                            criado_em: new Date().toISOString()
+                            usuario_id: usuario.id,
+                            mensagem: mensagem
                         }
                     ]);
 
-                if (error) throw error;
+                console.log('Resultado da inserção:', data);
+                console.log('Erro na inserção:', error);
+
+                if (error) {
+                    console.error('Erro ao inserir comentário:', error);
+                    throw error;
+                }
 
                 // Clear input and reload comments
                 comentarioInput.value = '';
                 await loadComments();
+                console.log('=== COMENTÁRIO ADICIONADO COM SUCESSO ===');
             } catch (error) {
-                console.error('Error adding comment:', error);
-                alert('Erro ao adicionar comentário. Por favor, tente novamente.');
+                console.error('=== ERRO AO ADICIONAR COMENTÁRIO ===');
+                console.error('Error:', error);
+                alert('Erro ao adicionar comentário: ' + error.message);
             }
         }
 
@@ -467,6 +588,9 @@
 
                 if (error) throw error;
 
+                // Add system comment for status change
+                await addSystemComment('Status alterado para: Resolvido');
+
                 alert('Chamado marcado como resolvido com sucesso!');
                 await loadTicketDetails();
             } catch (error) {
@@ -475,11 +599,186 @@
             }
         }
 
+        // Change ticket status
+        window.alterarStatus = async () => {
+            const statusSelect = document.getElementById('status-select');
+            const newStatus = statusSelect.value;
+
+            console.log('Tentando alterar status...');
+            console.log('Ticket ID:', ticketId);
+            console.log('Novo status:', newStatus);
+
+            if (!confirm(`Tem certeza que deseja alterar o status para: ${newStatus}?`)) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('chamados')
+                    .update({ status: newStatus })
+                    .eq('id', ticketId);
+
+                if (error) {
+                    console.error('Erro ao atualizar status:', error);
+                    throw error;
+                }
+
+                console.log('Status atualizado com sucesso');
+
+                // Add system comment for status change
+                await addSystemComment(`Status alterado para: ${newStatus}`);
+
+                alert(`Status alterado para ${newStatus} com sucesso!`);
+                await loadTicketDetails();
+            } catch (error) {
+                console.error('Error updating ticket status:', error);
+                alert('Erro ao atualizar status do chamado: ' + error.message);
+            }
+        };
+
+        // Add system comment for status changes
+        async function addSystemComment(message) {
+            try {
+                console.log('Tentando adicionar comentário de sistema:', message);
+                console.log('Ticket ID:', ticketId);
+                
+                const userEmail = localStorage.getItem('userEmail');
+                console.log('User email:', userEmail);
+                
+                if (!userEmail) {
+                    console.error('User email não encontrado no localStorage');
+                    return;
+                }
+
+                const { data: usuario, error: userError } = await supabase
+                    .from('usuarios')
+                    .select('id')
+                    .eq('email', userEmail)
+                    .single();
+
+                if (userError) {
+                    console.error('Erro ao buscar usuário para comentário de sistema:', userError);
+                    return;
+                }
+
+                if (!usuario) {
+                    console.error('Usuário não encontrado para comentário de sistema');
+                    return;
+                }
+
+                console.log('Usuário encontrado para comentário de sistema:', usuario.id);
+
+                const { error } = await supabase
+                    .from('comentarios')
+                    .insert([
+                        {
+                            chamado_id: ticketId,
+                            usuario_id: usuario.id,
+                            mensagem: message
+                        }
+                    ]);
+
+                if (error) {
+                    console.error('Erro ao inserir comentário de sistema:', error);
+                } else {
+                    console.log('Comentário de sistema adicionado com sucesso');
+                }
+            } catch (error) {
+                console.error('Error adding system comment:', error);
+            }
+        }
+
+        // Open modal to forward ticket
+        window.abrirModalEncaminhar = async () => {
+            const modal = document.getElementById('modal-encaminhar');
+            const tecnicoSelect = document.getElementById('tecnico-select');
+            
+            // Load technicians
+            try {
+                const { data: tecnicos, error } = await supabase
+                    .from('usuarios')
+                    .select('id, nome, email')
+                    .in('regra', ['tecnico', 'administrador']);
+
+                if (error) throw error;
+
+                tecnicoSelect.innerHTML = '<option value="">Selecione um técnico...</option>';
+                
+                if (tecnicos && tecnicos.length > 0) {
+                    tecnicos.forEach(tecnico => {
+                        const option = document.createElement('option');
+                        option.value = tecnico.id;
+                        option.textContent = `${tecnico.nome} (${tecnico.email})`;
+                        tecnicoSelect.appendChild(option);
+                    });
+                } else {
+                    tecnicoSelect.innerHTML = '<option value="">Nenhum técnico encontrado</option>';
+                }
+
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } catch (error) {
+                console.error('Error loading technicians:', error);
+                alert('Erro ao carregar técnicos. Por favor, tente novamente.');
+            }
+        };
+
+        // Close modal
+        window.fecharModalEncaminhar = () => {
+            const modal = document.getElementById('modal-encaminhar');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        // Forward ticket to selected technician
+        window.encaminharChamado = async () => {
+            const tecnicoSelect = document.getElementById('tecnico-select');
+            const novoTecnicoId = tecnicoSelect.value;
+
+            if (!novoTecnicoId) {
+                alert('Por favor, selecione um técnico para encaminhar.');
+                return;
+            }
+
+            if (!confirm('Tem certeza que deseja encaminhar este chamado para o técnico selecionado?')) {
+                return;
+            }
+
+            try {
+                // Get technician name for comment
+                const { data: novoTecnico } = await supabase
+                    .from('usuarios')
+                    .select('nome')
+                    .eq('id', novoTecnicoId)
+                    .single();
+
+                // Update ticket with new technician
+                const { error } = await supabase
+                    .from('chamados')
+                    .update({ tecnico_id: novoTecnicoId })
+                    .eq('id', ticketId);
+
+                if (error) throw error;
+
+                // Add system comment
+                await addSystemComment(`Chamado encaminhado para: ${novoTecnico ? novoTecnico.nome : 'técnico'}`);
+
+                alert('Chamado encaminhado com sucesso!');
+                fecharModalEncaminhar();
+                await loadTicketDetails();
+            } catch (error) {
+                console.error('Error forwarding ticket:', error);
+                alert('Erro ao encaminhar chamado. Por favor, tente novamente.');
+            }
+        };
+
         // Helper functions
         function getStatusColor(status) {
             const colors = {
                 'Aberto': 'bg-blue-100 text-blue-700',
+                'Em andamento': 'bg-yellow-100 text-yellow-700',
                 'Em progresso': 'bg-yellow-100 text-yellow-700',
+                'Pendente': 'bg-orange-100 text-orange-700',
                 'Resolvido': 'bg-green-100 text-green-700'
             };
             return colors[status] || 'bg-gray-100 text-gray-700';

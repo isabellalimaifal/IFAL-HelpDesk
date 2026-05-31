@@ -304,6 +304,8 @@
         // Logout function
         window.logout = async () => {
             await supabase.auth.signOut();
+            localStorage.removeItem('userType');
+            localStorage.removeItem('userEmail');
             window.location.href = 'login.html';
         };
 
@@ -482,6 +484,19 @@
             }
 
             try {
+                // Get actual user ID from localStorage
+                const userEmail = localStorage.getItem('userEmail');
+                const { data: usuario } = await supabase
+                    .from('usuarios')
+                    .select('id')
+                    .eq('email', userEmail)
+                    .single();
+
+                if (!usuario) {
+                    alert('Erro ao identificar usuário. Por favor, faça login novamente.');
+                    return;
+                }
+
                 // Insert ticket into Supabase
                 const { data, error } = await supabase
                     .from('chamados')
@@ -492,7 +507,7 @@
                             categoria: categoria,
                             prioridade: prioridade,
                             status: 'Aberto',
-                            solicitante_id: 1, // Placeholder - should be actual user ID
+                            solicitante_id: usuario.id,
                             tecnico_id: null,
                             criado_em: new Date().toISOString()
                         }
@@ -501,7 +516,7 @@
                 if (error) throw error;
 
                 alert('Chamado criado com sucesso!');
-                window.location.href = 'index.html';
+                window.location.href = 'dashboard.html';
             } catch (error) {
                 console.error('Error creating ticket:', error);
                 alert('Erro ao criar chamado. Por favor, tente novamente.');

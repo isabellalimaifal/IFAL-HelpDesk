@@ -112,8 +112,12 @@
                             <span class="text-sm text-gray-600">Abertos</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" id="filter-progresso" checked class="w-4 h-4 text-emerald-700 rounded focus:ring-emerald-700">
-                            <span class="text-sm text-gray-600">Em Progresso</span>
+                            <input type="checkbox" id="filter-andamento" checked class="w-4 h-4 text-emerald-700 rounded focus:ring-emerald-700">
+                            <span class="text-sm text-gray-600">Em Andamento</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="filter-pendentes" checked class="w-4 h-4 text-emerald-700 rounded focus:ring-emerald-700">
+                            <span class="text-sm text-gray-600">Pendentes</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" id="filter-resolvidos" checked class="w-4 h-4 text-emerald-700 rounded focus:ring-emerald-700">
@@ -249,6 +253,8 @@
         // Logout function
         window.logout = async () => {
             await supabase.auth.signOut();
+            localStorage.removeItem('userType');
+            localStorage.removeItem('userEmail');
             window.location.href = 'login.html';
         };
 
@@ -357,10 +363,11 @@
         // Setup filter listeners
         function setupFilterListeners() {
             const filterAbertos = document.getElementById('filter-abertos');
-            const filterProgresso = document.getElementById('filter-progresso');
+            const filterAndamento = document.getElementById('filter-andamento');
+            const filterPendentes = document.getElementById('filter-pendentes');
             const filterResolvidos = document.getElementById('filter-resolvidos');
 
-            [filterAbertos, filterProgresso, filterResolvidos].forEach(filter => {
+            [filterAbertos, filterAndamento, filterPendentes, filterResolvidos].forEach(filter => {
                 filter.addEventListener('change', applyFilters);
             });
         }
@@ -368,12 +375,14 @@
         // Apply filters to tickets
         function applyFilters() {
             const filterAbertos = document.getElementById('filter-abertos').checked;
-            const filterProgresso = document.getElementById('filter-progresso').checked;
+            const filterAndamento = document.getElementById('filter-andamento').checked;
+            const filterPendentes = document.getElementById('filter-pendentes').checked;
             const filterResolvidos = document.getElementById('filter-resolvidos').checked;
 
             const filteredTickets = allTickets.filter(chamado => {
                 if (chamado.status === 'Aberto' && !filterAbertos) return false;
-                if (chamado.status === 'Em progresso' && !filterProgresso) return false;
+                if ((chamado.status === 'Em andamento' || chamado.status === 'Em progresso') && !filterAndamento) return false;
+                if (chamado.status === 'Pendente' && !filterPendentes) return false;
                 if (chamado.status === 'Resolvido' && !filterResolvidos) return false;
                 return true;
             });
@@ -478,7 +487,9 @@
         function getStatusColor(status) {
             const colors = {
                 'Aberto': 'bg-blue-100 text-blue-700',
+                'Em andamento': 'bg-yellow-100 text-yellow-700',
                 'Em progresso': 'bg-yellow-100 text-yellow-700',
+                'Pendente': 'bg-orange-100 text-orange-700',
                 'Resolvido': 'bg-green-100 text-green-700'
             };
             return colors[status] || 'bg-gray-100 text-gray-700';

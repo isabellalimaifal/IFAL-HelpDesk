@@ -192,7 +192,7 @@
             errorAlert.classList.add('hidden');
 
             // Validate institutional email
-            if (!email.endsWith('@ifal.edu.br') && !email.endsWith('@aluno.ifal.edu.br')) {
+            if (!email.endsWith('@ifal.edu.br') && !email.endsWith('@aluno.ifal.edu.br') && !email.endsWith('@tec.ifal.edu.br')) {
                 errorMessage.textContent = 'Apenas e-mails institucionais do IFAL são permitidos!';
                 errorAlert.classList.remove('hidden');
                 return;
@@ -206,6 +206,26 @@
                 });
 
                 if (error) throw error;
+
+                // Determine user type based on email domain
+                // Fetch user role from usuarios table
+                const { data: usuario, error: userError } = await supabase
+                    .from('usuarios')
+                    .select('regra')
+                    .eq('email', email)
+                    .single();
+
+                // Determine user type - use database role if available, otherwise fallback to email domain
+                let userType;
+                if (usuario && usuario.regra) {
+                    userType = usuario.regra;
+                } else {
+                    userType = email.endsWith('@tec.ifal.edu.br') ? 'tecnico' : 'aluno';
+                }
+                
+                // Save user type and email in localStorage
+                localStorage.setItem('userType', userType);
+                localStorage.setItem('userEmail', email);
 
                 // Redirect to dashboard on success
                 window.location.href = 'dashboard.html';
@@ -232,7 +252,7 @@
             errorAlert.classList.add('hidden');
 
             // Validate institutional email
-            if (!email.endsWith('@ifal.edu.br') && !email.endsWith('@aluno.ifal.edu.br')) {
+            if (!email.endsWith('@ifal.edu.br') && !email.endsWith('@aluno.ifal.edu.br') && !email.endsWith('@tec.ifal.edu.br')) {
                 errorMessage.textContent = 'Apenas e-mails institucionais do IFAL são permitidos!';
                 errorAlert.classList.remove('hidden');
                 return;
