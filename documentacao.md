@@ -72,3 +72,53 @@ O IFAL enfrenta dificuldades para gerenciar chamados e suporte técnico de forma
   * **Segurança Institucional:** O Supabase permite criar regras direto no banco (triggers) que impedem cadastros externos, blindando o sistema.
   * **Agilidade com IA:** A inclusão de uma API de IA leve no frontend resolve o problema de chamados categorizados erroneamente sem inflar o custo de desenvolvimento.
   * **Centralização da comunicação:** Substituir o e-mail/WhatsApp por uma aba de comentários atrelada ao ID do chamado garante auditoria, eficácia e histórico para a gestão do IFAL.
+ 
+  * ---
+
+## 5. Roadmap (Próximos Passos)
+
+### Planejamento de Evolução do Sistema
+
+O sistema HelpDesk foi desenvolvido de forma modular, permitindo a adição de novas funcionalidades conforme as necessidades da instituição. As próximas versões previstas incluem:
+
+### Fase 1: Notificações por E-mail
+
+* **Objetivo:** Melhorar a comunicação com os usuários.
+* **Funcionalidade:** Envio automático de e-mails sempre que houver alteração no status do chamado.
+* **Benefícios:**
+  - Acompanhamento em tempo real do atendimento.
+  - Redução da necessidade de acessar constantemente a plataforma.
+  - Maior transparência no processo de suporte.
+
+### Fase 2: Dashboard e Gráficos de Desempenho
+
+* **Objetivo:** Fornecer indicadores para gestão dos atendimentos.
+* **Funcionalidade:** Criação de um painel administrativo com gráficos e métricas.
+* **Indicadores previstos:**
+  - Quantidade de chamados abertos e resolvidos.
+  - Tempo médio de atendimento.
+  - Desempenho individual dos técnicos.
+  - Volume de demandas por categoria.
+* **Benefícios:**
+  - Melhor acompanhamento da equipe.
+  - Apoio à tomada de decisões.
+  - Identificação de gargalos nos atendimentos.
+
+### Fase 3: Chat Interno em Tempo Real
+
+* **Objetivo:** Centralizar a comunicação entre usuário e técnico.
+* **Funcionalidade:** Implementação de um sistema de mensagens integrado ao chamado.
+* **Benefícios:**
+  - Comunicação mais rápida.
+  - Registro completo das conversas.
+  - Maior eficiência na resolução de problemas.
+  - Redução da dependência de aplicativos externos.
+
+### Perspectivas Futuras
+
+* Integração com aplicativos móveis.
+* Sistema de avaliações de atendimento.
+* Geração automática de relatórios gerenciais.
+* Uso ampliado de Inteligência Artificial para sugestões de soluções e respostas automáticas.
+
+---
