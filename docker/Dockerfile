@@ -21,7 +21,7 @@ ENV VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
 COPY package*.json ./
 
 # Instalar dependências
-RUN npm ci --only=production
+RUN npm install
 
 # Copiar todos os arquivos do projeto
 COPY . .
@@ -31,6 +31,9 @@ RUN npm run build
 
 # Stage 2: Servir com Nginx
 FROM nginx:alpine
+
+# Copiar configuração customizada do Nginx
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copiar arquivos construídos para o diretório do nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
