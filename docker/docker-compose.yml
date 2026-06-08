@@ -1,5 +1,5 @@
-# Docker Compose para ambiente de desenvolvimento - IFAL-HelpDesk
-# Configuração para rodar a aplicação Vite com hot-reload
+# Docker Compose para produção - IFAL-HelpDesk
+# Configuração para rodar a aplicação Vite com Nginx
 
 version: '3.8'
 
@@ -8,15 +8,10 @@ services:
     build:
       context: ..  # Contexto do build é o diretório pai (raiz do projeto)
       dockerfile: docker/Dockerfile
-    container_name: ifal-helpdesk-dev
+      args:
+        - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+        - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+    container_name: ifal-helpdesk-prod
     ports:
-      - "8080:5173"  # Mapeamento porta host:container (Vite padrão é 5173)
-    volumes:
-      - ..:/app  # Monta o código fonte para hot-reload
-      - /app/node_modules  # Preserva node_modules do container
-    environment:
-      - VITE_HOST=0.0.0.0  # Permite acesso externo ao Vite
-      - NODE_ENV=development
+      - "8080:80"  # Mapeamento porta host:container (Nginx porta 80)
     restart: unless-stopped
-    stdin_open: true  # Mantém o container rodando
-    tty: true  # Aloca um terminal para o container
