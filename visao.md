@@ -56,7 +56,7 @@ As colaboradoras deste time:
 ## ✅ Status de Desenvolvimento
 - [x] Definição do Escopo
 - [x] Documento de Visão
-- [ ] Desenvolvimento do MVP
+- [x] Desenvolvimento do MVP
 
 ---
 <p align="center">
