@@ -228,7 +228,7 @@
                 localStorage.setItem('userEmail', email);
 
                 // Redirect to dashboard on success
-                window.location.href = 'dashboard.html';
+                window.location.href = '/dashboard';
             } catch (error) {
                 console.error('Login error:', error);
                 errorMessage.textContent = error.message || 'Erro ao fazer login. Verifique suas credenciais.';
